@@ -818,9 +818,28 @@ class GridPreviewWidget(QLabel):
             
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton and os.path.exists(self.image_path):
-            # Use the new enhanced viewer instead of full screen
-            self.viewer = ImageVideoViewer(self.image_path)
-            self.viewer.show()
+            # Find the parent MultiPreviewWidget and use its parent_gui reference
+            parent_multi_preview = self.find_parent(MultiPreviewWidget)
+            
+            if parent_multi_preview and parent_multi_preview.parent_gui and \
+               hasattr(parent_multi_preview.parent_gui, 'output_preview_type_combo') and \
+               parent_multi_preview.parent_gui.output_preview_type_combo.currentText() == "Included":
+                # Use embedded preview - this will be implemented in parent GUI
+                if hasattr(parent_multi_preview.parent_gui, "show_media_preview"):
+                    parent_multi_preview.parent_gui.show_media_preview(self.image_path)
+            else:
+                # Default to dialog viewer
+                self.viewer = ImageVideoViewer(self.image_path)
+                self.viewer.show()
+                
+    def find_parent(self, widget_class):
+        """Find parent widget of a specific class type."""
+        parent = self.parent()
+        while parent:
+            if isinstance(parent, widget_class):
+                return parent
+            parent = parent.parent()
+        return None
             
     def enterEvent(self, event):
         """Add hover effect."""
@@ -846,8 +865,9 @@ class GridPreviewWidget(QLabel):
 
 class MultiPreviewWidget(QWidget):
     """Widget to display multiple output images/videos in a grid."""
-    def __init__(self):
+    def __init__(self, parent_gui=None):
         super().__init__()
+        self.parent_gui = parent_gui  # Store reference to main GUI
         self.setStyleSheet("""
             QWidget {
                 background-color: #f8f9fa;
@@ -993,15 +1013,24 @@ class MultiPreviewWidget(QWidget):
                         preview.setPixmap(scaled_pixmap)
                     cap.release()
                     
-                    # Make it clickable
+                    # Make it clickable - check parent GUI's output preview setting
                     def open_video():
                         try:
-                            viewer = ImageVideoViewer(file_path)
-                            viewer.show()
-                            # Keep reference to prevent garbage collection
-                            if not hasattr(preview, '_viewer_refs'):
-                                preview._viewer_refs = []
-                            preview._viewer_refs.append(viewer)
+                            # Check if parent GUI exists and get its output preview setting
+                            if (self.parent_gui and 
+                                hasattr(self.parent_gui, 'output_preview_type_combo') and 
+                                self.parent_gui.output_preview_type_combo.currentText() == "Included"):
+                                # Use embedded preview through parent GUI
+                                if hasattr(self.parent_gui, "show_media_preview"):
+                                    self.parent_gui.show_media_preview(file_path)
+                            else:
+                                # Fall back to dialog viewer
+                                viewer = ImageVideoViewer(file_path)
+                                viewer.show()
+                                # Keep reference to prevent garbage collection
+                                if not hasattr(preview, '_viewer_refs'):
+                                    preview._viewer_refs = []
+                                preview._viewer_refs.append(viewer)
                         except Exception as e:
                             print(f"Error opening video: {e}")
                     
@@ -1012,12 +1041,21 @@ class MultiPreviewWidget(QWidget):
                     # Still make it clickable even if preview fails
                     def open_video():
                         try:
-                            viewer = ImageVideoViewer(file_path)
-                            viewer.show()
-                            # Keep reference to prevent garbage collection
-                            if not hasattr(preview, '_viewer_refs'):
-                                preview._viewer_refs = []
-                            preview._viewer_refs.append(viewer)
+                            # Check if parent GUI exists and get its output preview setting
+                            if (self.parent_gui and 
+                                hasattr(self.parent_gui, 'output_preview_type_combo') and 
+                                self.parent_gui.output_preview_type_combo.currentText() == "Included"):
+                                # Use embedded preview through parent GUI
+                                if hasattr(self.parent_gui, "show_media_preview"):
+                                    self.parent_gui.show_media_preview(file_path)
+                            else:
+                                # Fall back to dialog viewer
+                                viewer = ImageVideoViewer(file_path)
+                                viewer.show()
+                                # Keep reference to prevent garbage collection
+                                if not hasattr(preview, '_viewer_refs'):
+                                    preview._viewer_refs = []
+                                preview._viewer_refs.append(viewer)
                         except Exception as e:
                             print(f"Error opening video: {e}")
                     preview.mousePressEvent = lambda event: open_video() if event.button() == Qt.LeftButton else None
@@ -1180,7 +1218,7 @@ class SplittableTabWidget(QTabWidget):
         preview_layout.addWidget(QLabel("Preview Type:"))
         preview_combo = QComboBox()
         preview_combo.addItems(["Dialog", "Included"])
-        preview_combo.setCurrentText("Dialog")
+        preview_combo.setCurrentText("Included")  # Default to Included
         preview_combo.setFixedHeight(25)
         preview_layout.addWidget(preview_combo)
         preview_layout.addStretch()
@@ -1203,14 +1241,14 @@ class SplittableTabWidget(QTabWidget):
         preview_layout.addWidget(QLabel("Preview Type:"))
         preview_combo = QComboBox()
         preview_combo.addItems(["Dialog", "Included"])
-        preview_combo.setCurrentText("Dialog")
+        preview_combo.setCurrentText("Included")  # Default to Included
         preview_combo.setFixedHeight(25)
         preview_layout.addWidget(preview_combo)
         preview_layout.addStretch()
         layout.addLayout(preview_layout)
         
         # Preview widget
-        preview_widget = MultiPreviewWidget()
+        preview_widget = MultiPreviewWidget(None)  # No parent reference in split view
         layout.addWidget(preview_widget)
         
         return tab
@@ -1226,7 +1264,7 @@ class SplittableTabWidget(QTabWidget):
         preview_layout.addWidget(QLabel("Media Preview Type:"))
         preview_combo = QComboBox()
         preview_combo.addItems(["Dialog", "Included"])
-        preview_combo.setCurrentText("Dialog")
+        preview_combo.setCurrentText("Included")  # Default to Included
         preview_combo.setFixedHeight(25)
         preview_layout.addWidget(preview_combo)
         preview_layout.addStretch()
@@ -2136,7 +2174,7 @@ class SafeVisionGUI(QMainWindow):
     def create_file_input_section(self):
         """Create the file input section."""
         section = QGroupBox("📁 File Input")
-        section.setFixedHeight(220)  # Increased to 220 for more height
+        section.setFixedHeight(250)  # Increased to 220 for more height
         section.setStyleSheet("""
             QGroupBox {
                 font-weight: bold;
@@ -2280,7 +2318,7 @@ class SafeVisionGUI(QMainWindow):
         global_preview_layout.addWidget(QLabel("Global Media Preview Type:"))
         self.global_preview_type_combo = QComboBox()
         self.global_preview_type_combo.addItems(["Dialog", "Included"])
-        self.global_preview_type_combo.setCurrentText("Dialog")
+        self.global_preview_type_combo.setCurrentText(self.settings.get("global_preview_type", "Included"))
         self.global_preview_type_combo.setFixedHeight(25)
         self.global_preview_type_combo.currentTextChanged.connect(self.on_global_preview_type_changed)
         global_preview_layout.addWidget(self.global_preview_type_combo)
@@ -2323,7 +2361,7 @@ class SafeVisionGUI(QMainWindow):
         input_preview_layout.addWidget(QLabel("Preview Type:"))
         self.input_preview_type_combo = QComboBox()
         self.input_preview_type_combo.addItems(["Dialog", "Included"])
-        self.input_preview_type_combo.setCurrentText("Dialog")
+        self.input_preview_type_combo.setCurrentText(self.settings.get("input_preview_type", "Included"))
         self.input_preview_type_combo.setFixedHeight(25)
         self.input_preview_type_combo.currentTextChanged.connect(self.on_input_preview_type_changed)
         input_preview_layout.addWidget(self.input_preview_type_combo)
@@ -2345,14 +2383,14 @@ class SafeVisionGUI(QMainWindow):
         output_preview_layout.addWidget(QLabel("Preview Type:"))
         self.output_preview_type_combo = QComboBox()
         self.output_preview_type_combo.addItems(["Dialog", "Included"])
-        self.output_preview_type_combo.setCurrentText("Dialog")
+        self.output_preview_type_combo.setCurrentText(self.settings.get("output_preview_type", "Included"))
         self.output_preview_type_combo.setFixedHeight(25)
         self.output_preview_type_combo.currentTextChanged.connect(self.on_output_preview_type_changed)
         output_preview_layout.addWidget(self.output_preview_type_combo)
         output_preview_layout.addStretch()
         output_layout.addLayout(output_preview_layout)
         
-        self.output_preview = MultiPreviewWidget()
+        self.output_preview = MultiPreviewWidget(self)
         output_layout.addWidget(self.output_preview)
         
         self.preview_tabs.addTab(output_tab, "📤 Output Preview")
@@ -2367,7 +2405,7 @@ class SafeVisionGUI(QMainWindow):
         preview_type_layout.addWidget(QLabel("Media Preview Type:"))
         self.preview_type_combo = QComboBox()
         self.preview_type_combo.addItems(["Dialog", "Included"])
-        self.preview_type_combo.setCurrentText("Dialog")
+        self.preview_type_combo.setCurrentText(self.settings.get("tree_preview_type", "Included"))
         self.preview_type_combo.setFixedHeight(25)
         self.preview_type_combo.currentTextChanged.connect(self.on_preview_type_changed)
         preview_type_layout.addWidget(self.preview_type_combo)
@@ -2402,9 +2440,17 @@ class SafeVisionGUI(QMainWindow):
         # Embedded media viewer (initially hidden)
         self.embedded_viewer = None
         
-        # Add the tab but hide it initially (only show when "Included" is selected)
+        # Add the tab but show/hide based on tree preview setting
         self.media_preview_tab_index = self.preview_tabs.addTab(self.media_preview_tab, "🎬 Media Preview")
-        self.preview_tabs.setTabVisible(self.media_preview_tab_index, False)
+        
+        # Set initial visibility based on loaded settings
+        tree_preview_type = self.settings.get("tree_preview_type", "Included")
+        if tree_preview_type == "Included":
+            self.preview_tabs.setTabVisible(self.media_preview_tab_index, True)
+            self.tree_view.file_selected_for_preview = self.show_embedded_preview
+        else:
+            self.preview_tabs.setTabVisible(self.media_preview_tab_index, False)
+            self.tree_view.file_selected_for_preview = None
         
         preview_layout.addWidget(self.preview_tabs)
         self.right_splitter.addWidget(preview_container)
@@ -2823,15 +2869,20 @@ class SafeVisionGUI(QMainWindow):
         self.output_preview_type_combo.setCurrentText(preview_type)
         self.preview_type_combo.setCurrentText(preview_type)
         
+        # Save settings immediately
+        self._save_settings()
+        
     def on_input_preview_type_changed(self, preview_type):
         """Handle input preview type change."""
         # Update input preview behavior based on selection
-        pass  # Placeholder for input-specific preview logic
+        # Save settings immediately
+        self._save_settings()
         
     def on_output_preview_type_changed(self, preview_type):
         """Handle output preview type change."""
         # Update output preview behavior based on selection  
-        pass  # Placeholder for output-specific preview logic
+        # Save settings immediately
+        self._save_settings()
 
     def on_preview_type_changed(self, preview_type):
         """Handle changes to media preview type."""
@@ -2850,15 +2901,19 @@ class SafeVisionGUI(QMainWindow):
             current_widget.setTabVisible(self.media_preview_tab_index, False)
             # Reset tree view to dialog preview
             self.tree_view.file_selected_for_preview = None
-    
-    def show_embedded_preview(self, file_path):
-        """Show media file in embedded preview tab."""
-        try:
-            # Clear previous viewer
-            if self.embedded_viewer:
-                self.embedded_viewer.setParent(None)
-                self.embedded_viewer = None
             
+        # Save settings immediately
+        self._save_settings()
+    
+    def show_media_preview(self, file_path):
+        """Show media file in embedded preview tab. Used by output tab and tree view."""
+        # Clear previous viewer
+        if hasattr(self, 'embedded_viewer') and self.embedded_viewer:
+            self.embedded_viewer.setParent(None)
+            self.embedded_viewer.deleteLater()
+            self.embedded_viewer = None
+        
+        try:
             # Hide the default label
             self.media_preview_label.hide()
             
@@ -2866,17 +2921,28 @@ class SafeVisionGUI(QMainWindow):
             self.embedded_viewer = ImageVideoViewer(file_path, embedded=True)
             self.media_preview_tab.layout().addWidget(self.embedded_viewer)
             
-            # Switch to media preview tab
-            current_widget = self.preview_type_combo.parent()
-            while current_widget and not isinstance(current_widget, (QTabWidget, SplittableTabWidget)):
-                current_widget = current_widget.parent()
-            if current_widget:
-                current_widget.setCurrentIndex(self.media_preview_tab_index)
+            # Switch to media preview tab - handles both regular and split views
+            current_widget = self.preview_tabs
+            if self.preview_tabs.is_split:
+                # Handle split view - use the active split
+                if self.preview_tabs.active_split == "left":
+                    current_widget = self.preview_tabs
+                elif hasattr(self.preview_tabs, 'split_widget') and self.preview_tabs.split_widget:
+                    current_widget = self.preview_tabs.split_widget
             
+            # Ensure the media preview tab is visible
+            if current_widget:
+                current_widget.setTabVisible(self.media_preview_tab_index, True)
+                current_widget.setCurrentIndex(self.media_preview_tab_index)
         except Exception as e:
             QMessageBox.warning(self, "Preview Error", f"Failed to preview file:\n{str(e)}")
             # Show the default label again
             self.media_preview_label.show()
+            
+    def show_embedded_preview(self, file_path):
+        """Show media file in embedded preview tab."""
+        # Use the common media preview method
+        self.show_media_preview(file_path)
     
     def restore_original_ui(self):
         """Restore the original UI layout."""
@@ -2891,9 +2957,10 @@ class SafeVisionGUI(QMainWindow):
             if hasattr(self, 'preview_tabs') and self.preview_tabs.is_split:
                 self.preview_tabs.restore_single_view()
             
-            # Reset preview type to dialog
+            # Reset preview type to loaded setting (don't force to Dialog)
+            saved_global_type = self.settings.get("global_preview_type", "Included")
             if hasattr(self, 'global_preview_type_combo'):
-                self.global_preview_type_combo.setCurrentText("Dialog")
+                self.global_preview_type_combo.setCurrentText(saved_global_type)
             
             QMessageBox.information(self, "UI Restored", "Original UI layout has been restored!")
             
@@ -3532,7 +3599,11 @@ class SafeVisionGUI(QMainWindow):
             "percent_threshold": 10.0,
             "count_threshold": 5,
             "fbr_labels": 2,
-            "fbr_frames": 10
+            "fbr_frames": 10,
+            "global_preview_type": "Included",
+            "input_preview_type": "Included", 
+            "output_preview_type": "Included",
+            "tree_preview_type": "Included"
         }
         
         try:
@@ -3563,7 +3634,11 @@ class SafeVisionGUI(QMainWindow):
             "percent_threshold": self.percent_spin.value(),
             "count_threshold": self.count_spin.value(),
             "fbr_labels": self.fbr_labels_spin.value(),
-            "fbr_frames": self.fbr_frames_spin.value()
+            "fbr_frames": self.fbr_frames_spin.value(),
+            "global_preview_type": self.global_preview_type_combo.currentText(),
+            "input_preview_type": self.input_preview_type_combo.currentText(),
+            "output_preview_type": self.output_preview_type_combo.currentText(),
+            "tree_preview_type": self.preview_type_combo.currentText()
         }
         
         try:
