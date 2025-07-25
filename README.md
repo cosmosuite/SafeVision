@@ -1,231 +1,221 @@
 
-# SafeVision
-<img width="1839" height="803" alt="image" src="https://github.com/user-attachments/assets/34eab01d-44de-4438-a409-1bbb01256c59" />
+# ![SafeVision Logo](https://i.ibb.co/d4LqhX4/Safe-Vision-2.png)
 
- ![GitHub Temp](https://i.ibb.co/d4LqhX4/Safe-Vision-2.png)
-
-SafeVision is a sophisticated Python script designed to detect and blur nudity in both images and videos. By harnessing advanced computer vision and deep learning techniques, SafeVision ensures that potentially sensitive or inappropriate content is effectively obscured, promoting safer and more appropriate media sharing and consumption. This README file provides comprehensive instructions on setting up and utilizing SafeVision effectively.
- ## Features
-- **Nudity Detection:** Detects various types of nudity in images and videos.
-- **Blur Functionality:** Blurs detected nudity to ensure safe content sharing.
-- **Exception Rules:** Configurable rules to control which parts should be blurred.
-- **Logging:** Generates logs with detailed detection information.
-
-## Installation
-
-1. **Clone the Repository:**
-   ```bash
-   git clone https://github.com/im-syn/safevision.git
-   cd safevision
-   ```
-
-2. **Install Dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Download the Model:**
-   - Ensure the `best.onnx` model is placed in the `Models` directory.
-
-## Usage
- ![Demo Image](https://i.postimg.cc/J07dYYLH/1-Output.jpg)
-### Command-line Arguments
-- `-i` or `--input`: Path to the input image or video (required).
-- `-o` or `--output`: Path to save the censored image or video. If not provided, a default path will be used.
-- `-b` or `--blur`: Apply blur to NSFW regions instead of drawing boxes.
-- `-e` or `--exception`: Path to the blur exception rules file.
-- `-fbr` or `--full_blur_rule`: Number of exposed boxes to trigger full image blur.
-
-### Example Commands
-1. **Detect nudity and draw boxes:**
-   ```bash
-   python main.py -i path/to/media.jpg
-   ```
-
-2. **Detect nudity and blur detected regions:**
-   ```bash
-   python main.py -i path/to/media.jpg -b
-   ```
-
-3. **Specify output path:**
-   ```bash
-   python main.py -i path/to/media.jpg -o path/to/output.jpg
-   ```
-
-4. **Use exception rules file:**
-   ```bash
-   python main.py -i path/to/media.jpg -e path/to/BlurException.rule
-   ```
-
-5. **Set full blur rule and use exception rules file:**
-   ```bash
-   python main.py -i path/to/media.jpg -e path/to/BlurException.rule -fbr 25
-   ```
-
-### Blur Exception Rules File (`BlurException.rule`)
-```plaintext
-FACE_MALE = false
-FACE_FEMALE = false
-ARMPITS_COVERED = false
-FEET_COVERED = false
-BUTTOCKS_COVERED = false
-BELLY_COVERED = false
-FEMALE_GENITALIA_COVERED = false
-FEMALE_BREAST_COVERED = false
-ANUS_COVERED = false
-MALE_GENITALIA_EXPOSED = true
-MALE_BREAST_EXPOSED = true
-ANUS_EXPOSED = true
-FEET_EXPOSED = false
-ARMPITS_EXPOSED = true
-FEMALE_GENITALIA_EXPOSED = true
-FEMALE_BREAST_EXPOSED = true
-BUTTOCKS_EXPOSED = true
-BELLY_EXPOSED = false
-```
-
-In the `BlurException.rule` file, `false` indicates that the corresponding body part will not be blurred, while `true` indicates that it will be blurred.
-
-### Video Processing
-
-#### Additional Command-line Arguments for Video
-- `-vo` or `--video_output`: Path to the video output folder. Default is 'video_output'.
-- `-r` or `--rule`: Blur rule in the format 'percentage/count'.
-
-#### Example Commands for Video Processing
-1. **Process video and draw boxes:**
-   ```bash
-   python video.py -i path/to/video.mp4 -t video
-   ```
-
-2. **Process video and blur detected regions:**
-   ```bash
-   python video.py -i path/to/video.mp4 -t video -b
-   ```
-
-3. **Specify video output folder:**
-   ```bash
-   python video.py -i path/to/video.mp4 -t video -vo path/to/video_output
-   ```
-
-4. **Use blur rule:**
-   ```bash
-   python video.py -i path/to/video.mp4 -t video -r 50/10
-   ```
-
-
-
-## 🎥 Video Processing (Advanced)
-
-The `video.py` script in SafeVision provides powerful and configurable video censorship capabilities, supporting multiple blurring strategies, audio handling, codec options, and more.
-
-### ✅ Command-Line Arguments
-
-* `-i`, `--input` – Path to the input video (**required**)
-* `-o`, `--output` – Output video path (optional)
-* `-t`, `--task` – Processing type: `frames` or `video` (default: `video`)
-* `-vo`, `--video_output` – Folder to store the final rendered video (default: `video_output`)
-* `-r`, `--rule` – Rule in the format `percentage/count` to trigger full blur
-* `-b`, `--boxes` – Generate video with detection boxes only
-* `--blur` – Blur detected regions instead of just drawing boxes (requires `--boxes`)
-* `-a`, `--with-audio` – Include original audio in the output video
-* `-c`, `--codec` – Output codec: `mp4v`, `avc1`, `xvid`, or `mjpg` (default: `mp4v`)
-* `--ffmpeg-path` – Path to `ffmpeg` binary if needed (for merging audio)
-* `-df`, `--delete-frames` – Delete frames after rendering the video
-* `--enhanced-blur` – Apply stronger blur for total censorship
-* `-fbr`, `--full-blur-rule` – Format: `labels/frames` to trigger full video blur
-* `--color` – Use solid color mask instead of blur
-* `--mask-color` – BGR color used for masking (e.g., `0,0,255` for red)
-
-###  Example Commands
-```bash
-python video.py -i path/to/video.mp4 -b
-python video.py -i path/to/video.mp4 -b --blur
-python video.py -i path/to/video.mp4 -b --blur -a -vo ./output_folder
-python video.py -i path/to/video.mp4 -b --blur -r 60/20
-python video.py -i path/to/video.mp4 -b --blur -fbr 8/3
-python video.py -i path/to/video.mp4 -b --color --mask-color 0,0,255
-python video.py -i path/to/video.mp4 -b --blur -df
-```
+**SafeVision** — Intelligent Nudity Detection & Blurring for Images and Videos
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)
+![Python](https://img.shields.io/badge/python-3.8%2B-yellow)
+![License](https://img.shields.io/github/license/im-syn/safevision)
+![Status](https://img.shields.io/badge/stability-stable-brightgreen)
 
 ---
 
-##  SafeVision GUI App
+##  Overview
 
-The SafeVisionGUI.py provides a modern desktop interface for interacting with the CLI tools.
+SafeVision is a sophisticated Python script designed to detect and blur nudity in both images and videos. By harnessing advanced computer vision and deep learning techniques, SafeVision ensures that potentially sensitive or inappropriate content is effectively obscured, promoting safer and more appropriate media sharing and consumption. This README file provides comprehensive instructions on setting up and utilizing SafeVision effectively.
+---
+
+##  Table of Contents
+
+* [ Features](#-features)
+* [ Installation](#-installation)
+* [ Image Processing](#️-image-processing)
+* [ Video Processing](#-video-processing)
+* [ Blur Exception Rules](#-blur-exception-rules)
+* [ GUI Application](#️-gui-application)
+* [ How It Works](#️-how-it-works)
+* [ Output Directory Structure](#-output-directory-structure)
+* [ NSFW Demo (Spoiler Warning)](#-nsfw-demo-spoiler-warning)
+* [ Conclusion](#-conclusion)
+
+---
+
+##  Features
+
+*  Nudity Detection (Image & Video)
+*  Selective or Full Blurring
+*  Custom Blur Exception Rules
+*  Detailed Logs and Reports
+*  Advanced CLI and GUI Support
+*  Color Masking & Enhanced Blur
+*  Auto Folder Structure & Cleanup Options
+*  Audio-Preserving Video Output
+
+---
+
+##  Installation
+
+```bash
+git clone https://github.com/im-syn/safevision.git
+cd safevision
+pip install -r requirements.txt
+```
+
+>  Place your `best.onnx` model in the `Models/` directory.
+
+---
+
+## Image Processing
+
+### 🔸 Basic Example
+
+```bash
+python main.py -i path/to/image.jpg
+```
+
+### 🔸 Blur Detected Areas
+
+```bash
+python main.py -i path/to/image.jpg -b
+```
+
+### 🔸 Full Options
+
+| Flag                       | Description                          |
+| -------------------------- | ------------------------------------ |
+| `-i`, `--input`            | Input image path (**required**)      |
+| `-o`, `--output`           | Output path (optional)               |
+| `-b`, `--blur`             | Blur detected regions                |
+| `-e`, `--exception`        | Path to BlurException.rule file      |
+| `-fbr`, `--full_blur_rule` | Number of boxes to trigger full blur |
+
+---
+
+## 🎥 Video Processing
+
+### 🔸 Basic Detection
+
+```bash
+python video.py -i path/to/video.mp4 -t video
+```
+
+### 🔸 Blur Video with Audio
+
+```bash
+python video.py -i path/to/video.mp4 -b --blur -a
+```
+
+### 🔸 Full CLI Options
+
+| Flag                       | Description                              |
+| -------------------------- | ---------------------------------------- |
+| `-i`, `--input`            | Input video path (**required**)          |
+| `-o`, `--output`           | Output video path                        |
+| `-t`, `--task`             | Task type: `video` or `frames`           |
+| `-vo`, `--video_output`    | Output folder                            |
+| `-r`, `--rule`             | Rule in format `percentage/count`        |
+| `-b`, `--boxes`            | Draw boxes                               |
+| `--blur`                   | Blur detected areas (requires `--boxes`) |
+| `-a`, `--with-audio`       | Include original audio                   |
+| `-c`, `--codec`            | Codec: `mp4v`, `xvid`, etc.              |
+| `--ffmpeg-path`            | Custom path to ffmpeg                    |
+| `-df`, `--delete-frames`   | Auto-delete temp frames                  |
+| `--enhanced-blur`          | Stronger censorship blur                 |
+| `--color`                  | Use solid color masking                  |
+| `--mask-color`             | Set color: e.g., `0,0,255` for red       |
+| `-fbr`, `--full-blur-rule` | Trigger full blur: `labels/frames`       |
+
+---
+
+##  Blur Exception Rules
+
+Create a file named `BlurException.rule` and define what labels to blur:
+
+```ini
+FACE_MALE = false
+FEMALE_BREAST_EXPOSED = true
+ANUS_EXPOSED = true
+...
+```
+
+* `true` → Blur this label.
+* `false` → Skip blurring for this label.
+
+---
+
+##  GUI Application
+
+A modern desktop GUI is available in `SafeVisionGUI.py`.
 
 ###  Features
-- Drag & Drop media loading (MP4, AVI, JPG, PNG)
-- Process modes: Blur, Mask, Boxes
-- FFmpeg integration and audio handling
-- Enhanced blur and solid color masking
-- Codec selection
-- Log panel and preview tab
-- Dark and Light themes
-- Real-time feedback
 
-###  How to Launch
+* Drag & drop images/videos
+* Blurring / Masking / Bounding Box mode
+* FFmpeg-based audio merging
+* Codec & frame settings
+* Real-time log panel and live preview
+* Theme toggle (dark/light)
 
+###  Launch
 ```bash
 python SafeVisionGUI.py
 ```
 
-###  Interface
+---
 
-- Input Section for file selection
-- Preview tab for before/after comparison
-- Log panel to view execution details
-- Settings tab for output folders and codecs
+##  How It Works
 
+###  Pipeline
 
+1. **Preprocessing** – Resize and normalize input image or video frames.
+2. **Inference** – Use `ONNXRuntime` to run the `best.onnx` model.
+3. **Postprocessing** – Detect bounding boxes and labels.
+4. **Censorship** – Apply blur/mask/box per user rules.
+5. **Rendering** – Save censored images/videos to output folders.
 
-### How Video Processing Works
-The video processing follows a similar structure to image processing, with additional steps for handling frames and creating videos.
+---
 
-## How It Works
+## 📂 Output Directory Structure
 
-### Overview
-The script processes an input image or video to detect and blur nudity based on a trained ONNX model. It includes the following main components:
+| Folder          | Description                      |
+| --------------- | -------------------------------- |
+| `output/`       | Final censored images/videos     |
+| `blur/`         | Full blurred content             |
+| `prosses/`      | Detection-only visuals (no blur) |
+| `video_output/` | Rendered final videos            |
 
-1. **Image/Video Preprocessing:**
-   - Reads and preprocesses the image or video frames, resizing and normalizing them for the model.
+---
 
-2. **Model Inference:**
-   - The `NudeDetector` class uses ONNX Runtime to load the model and perform inference to detect nudity.
+## 📷 NSFW Demo (Spoiler Warning)
 
-3. **Postprocessing:**
-   - Processes the model output to extract detected bounding boxes and labels.
+<details>
+  <summary>⚠️ Click to Show Example Output Image using SafeVisionGUI (Contains NSFW Examples with Blurring)</summary>
+  <p>
 
-4. **Blurring and Drawing Boxes:**
-   - Applies blurring to detected nudity or draws bounding boxes based on user configuration.
+![Blurred Output](https://github.com/user-attachments/assets/a62d64d1-199c-4d28-a34f-46c53ba056e6)
 
-### Detailed Code Explanation
+*Example showing SafeVision blurring applied on exposed content. using the SafeVisionGUI*
 
-#### Image/Video Preprocessing
-- Reads the image or video frames using OpenCV.
-- Resizes and pads the image or video frames to maintain aspect ratio.
-- Normalizes the image or video frame data for model input.
+  </p>
+</details>
+<details>
+  <summary>⚠️ Click to Show Example Output using CLI (main.py) (Contains NSFW Examples with Blurring)</summary>
+  <p>
 
-#### Model Inference
-- Initializes the ONNX model for inference.
-- Loads exception rules for blurring.
+![Blurred Output](https://github.com/user-attachments/assets/5a9b362b-e103-427c-b10d-8f6157578f10)
 
-#### Postprocessing
-- Transposes and processes model output to extract bounding boxes and class labels.
+*Example showing SafeVision blurring applied on exposed content.*
 
-#### Blurring and Drawing Boxes
-- Detects nudity in the image or video frames.
-- Applies blurring or draws bounding boxes based on user options.
-- Saves the processed image or video frames to the specified output path.
+  </p>
+</details>
 
-### Creating Directories
-The script ensures necessary directories exist for saving output images and videos.
-
-## Output
-- **Processed Images/Videos:**
-  - **Blur Folder:** Contains all the output images with nudity blurred based on the applied rules.
-  - **Output Folder:** Stores debug images with detected boxes and blurring based on the rules. 
-  - **Prosses Folder:** Contains images with only the detected boxes, without any blurring. 
-
+---
 ### Conclusion
-SafeVision provides a robust solution for detecting and blurring nudity in images and videos, making it a valuable tool for content moderation and safe media sharing. Follow the instructions in this README to set up and use SafeVision effectively. If you have any questions or issues, please refer to the documentation or contact me.
+SafeVision provides a robust solution for detecting and blurring nudity in images and videos, making it a valuable tool for content moderation and safe media sharing. Follow the instructions in this README to set up and use SafeVision effectively. 
+
+---
+
+## 🛠 Maintainer & Support
+
+Maintained by [@im-syn](https://github.com/im-syn)
+Pull requests, issues, and contributions are welcome!
+
+---
+
+> **Note:** This project is intended for ethical and responsible use only. Always follow legal and platform-specific content handling policies.
+
+
+---
+## ☕ Like It?
+
+If this helped you, consider giving the repo a 🌟 or forking it to your toolkit.
+Thank you for using **SafeContentText**! Feel free to open issues or PRs for improvements.
