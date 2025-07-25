@@ -238,10 +238,37 @@ def create_safe_video_writer(output_path, width, height, fps, codec_preference=N
     
     return writer
 
+def download_model(url, save_path):
+    """Download the ONNX model from the provided URL and save it to the specified path."""
+    import urllib.request
+    
+    print(f"Downloading model from {url}...")
+    try:
+        # Create the directory if it doesn't exist
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        
+        # Download the file
+        urllib.request.urlretrieve(url, save_path)
+        print(f"Model downloaded successfully to {save_path}")
+        return True
+    except Exception as e:
+        print(f"Error downloading model: {str(e)}")
+        return False
+
 class NudeDetector:
     def __init__(self, providers=None):
         # 1) locate the shipped model
-        model_orig   = os.path.join(os.path.dirname(__file__), "Models/best.onnx")
+        model_dir = os.path.join(os.path.dirname(__file__), "Models")
+        model_orig = os.path.join(model_dir, "best.onnx")
+        
+        # Check if model exists, if not download it
+        if not os.path.exists(model_orig):
+            print("Model file not found. Creating Models directory and downloading model...")
+            model_url = "https://github.com/im-syn/SafeVision/raw/refs/heads/main/Models/best.onnx"
+            success = download_model(model_url, model_orig)
+            if not success:
+                raise FileNotFoundError(f"Could not download model from {model_url}. Please download manually and place in {model_dir}")
+        
         # 2) convert/downgrade to opset15 on first run
         model_to_load = _ensure_opset15(model_orig)
         # 3) now load the compatible model
