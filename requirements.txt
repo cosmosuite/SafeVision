@@ -3,3 +3,8 @@ opencv-python-headless==4.5.5.64
 onnx==1.13.0
 onnxruntime==1.10.0
 argparse==1.4.0
+PyQt5
+tqdm
+opencv-python
+
+
