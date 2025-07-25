@@ -1,7 +1,5 @@
 
 # ![SafeVision Logo](https://i.ibb.co/d4LqhX4/Safe-Vision-2.png)
-
-**SafeVision** — Intelligent Nudity Detection & Blurring for Images and Videos
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue)
 ![Python](https://img.shields.io/badge/python-3.8%2B-yellow)
 ![License](https://img.shields.io/github/license/im-syn/safevision)
