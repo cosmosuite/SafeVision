@@ -113,6 +113,72 @@ In the `BlurException.rule` file, `false` indicates that the corresponding body 
    python video.py -i path/to/video.mp4 -t video -r 50/10
    ```
 
+
+
+## 🎥 Video Processing (Advanced)
+
+The `video.py` script in SafeVision provides powerful and configurable video censorship capabilities, supporting multiple blurring strategies, audio handling, codec options, and more.
+
+### ✅ Command-Line Arguments
+
+* `-i`, `--input` – Path to the input video (**required**)
+* `-o`, `--output` – Output video path (optional)
+* `-t`, `--task` – Processing type: `frames` or `video` (default: `video`)
+* `-vo`, `--video_output` – Folder to store the final rendered video (default: `video_output`)
+* `-r`, `--rule` – Rule in the format `percentage/count` to trigger full blur
+* `-b`, `--boxes` – Generate video with detection boxes only
+* `--blur` – Blur detected regions instead of just drawing boxes (requires `--boxes`)
+* `-a`, `--with-audio` – Include original audio in the output video
+* `-c`, `--codec` – Output codec: `mp4v`, `avc1`, `xvid`, or `mjpg` (default: `mp4v`)
+* `--ffmpeg-path` – Path to `ffmpeg` binary if needed (for merging audio)
+* `-df`, `--delete-frames` – Delete frames after rendering the video
+* `--enhanced-blur` – Apply stronger blur for total censorship
+* `-fbr`, `--full-blur-rule` – Format: `labels/frames` to trigger full video blur
+* `--color` – Use solid color mask instead of blur
+* `--mask-color` – BGR color used for masking (e.g., `0,0,255` for red)
+
+###  Example Commands
+```bash
+python video.py -i path/to/video.mp4 -b
+python video.py -i path/to/video.mp4 -b --blur
+python video.py -i path/to/video.mp4 -b --blur -a -vo ./output_folder
+python video.py -i path/to/video.mp4 -b --blur -r 60/20
+python video.py -i path/to/video.mp4 -b --blur -fbr 8/3
+python video.py -i path/to/video.mp4 -b --color --mask-color 0,0,255
+python video.py -i path/to/video.mp4 -b --blur -df
+```
+
+---
+
+##  SafeVision GUI App
+
+The SafeVisionGUI.py provides a modern desktop interface for interacting with the CLI tools.
+
+###  Features
+- Drag & Drop media loading (MP4, AVI, JPG, PNG)
+- Process modes: Blur, Mask, Boxes
+- FFmpeg integration and audio handling
+- Enhanced blur and solid color masking
+- Codec selection
+- Log panel and preview tab
+- Dark and Light themes
+- Real-time feedback
+
+###  How to Launch
+
+```bash
+python SafeVisionGUI.py
+```
+
+###  Interface
+
+- Input Section for file selection
+- Preview tab for before/after comparison
+- Log panel to view execution details
+- Settings tab for output folders and codecs
+
+
+
 ### How Video Processing Works
 The video processing follows a similar structure to image processing, with additional steps for handling frames and creating videos.
 
