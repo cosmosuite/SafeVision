@@ -1,5 +1,7 @@
 
 # SafeVision
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/44434b2b-e7c9-4458-b878-83053860e8d2" />
+
  ![GitHub Temp](https://i.ibb.co/d4LqhX4/Safe-Vision-2.png)
 
 SafeVision is a sophisticated Python script designed to detect and blur nudity in both images and videos. By harnessing advanced computer vision and deep learning techniques, SafeVision ensures that potentially sensitive or inappropriate content is effectively obscured, promoting safer and more appropriate media sharing and consumption. This README file provides comprehensive instructions on setting up and utilizing SafeVision effectively.
