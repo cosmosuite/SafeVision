@@ -1,6 +1,6 @@
 
 # SafeVision
-<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/44434b2b-e7c9-4458-b878-83053860e8d2" />
+<img width="1839" height="803" alt="image" src="https://github.com/user-attachments/assets/34eab01d-44de-4438-a409-1bbb01256c59" />
 
  ![GitHub Temp](https://i.ibb.co/d4LqhX4/Safe-Vision-2.png)
 
