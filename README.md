@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/python-3.8%2B-yellow)
 ![License](https://img.shields.io/github/license/im-syn/safevision)
 ![Status](https://img.shields.io/badge/stability-stable-brightgreen)
-
+ 
 ---
 ##  Overview
 
