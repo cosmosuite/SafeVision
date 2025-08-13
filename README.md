@@ -146,6 +146,155 @@ A modern desktop GUI is available in `SafeVisionGUI.py`.
 ```bash
 python SafeVisionGUI.py
 ```
+---
+# Live Nudity Detection with Blur Exception Rules & Gender/Age Detection
+
+## Usage Examples
+
+### 1. Basic Usage (Auto-loads blur rules)
+```bash
+python live.py
+```
+- Automatically checks for `BlurException.rule` in the same directory
+- If found and not empty, uses existing rules
+- If not found or empty, creates default rules with all labels set to `true`
+
+### 2. Custom Rules File
+```bash
+python live.py -r custom_rules.rule
+```
+or
+```bash
+python live.py --rules custom_rules.rule
+```
+
+### 3. Enable Gender and Age Detection
+```bash
+python live.py -g
+```
+or
+```bash
+python live.py --gender-detection
+```
+- Requires `best_gender.onnx` model in the `Models/` folder
+- Displays gender (Male/Female) and estimated age for detected faces
+- Shows confidence scores for predictions
+
+### 4. Complete Example with All Features
+```bash
+python live.py -c 0 -r my_rules.rule -g --auto-record --alert-threshold 2
+```
+
+## Blur Exception Rules
+
+### Auto-Loading Behavior:
+- **On startup**: Checks for `BlurException.rule` in same directory
+- **If exists and not empty**: Loads existing rules
+- **If missing or empty**: Creates default rules automatically
+- **Optional -r parameter**: Override auto-loading with specific file
+
+### Rules File Format:
+The rules file uses the format: `LABEL = true/false`
+- `true`: Apply blur/censoring to this detection type
+- `false`: Skip blur/censoring for this detection type
+
+### Available Labels:
+- FEMALE_GENITALIA_EXPOSED
+- MALE_GENITALIA_EXPOSED  
+- FEMALE_BREAST_EXPOSED
+- MALE_BREAST_EXPOSED
+- BUTTOCKS_EXPOSED
+- ANUS_EXPOSED
+- BELLY_EXPOSED
+- FEET_EXPOSED
+- ARMPITS_EXPOSED
+- FACE_FEMALE
+- FACE_MALE
+- FEMALE_GENITALIA_COVERED
+- FEMALE_BREAST_COVERED
+- BUTTOCKS_COVERED
+- ANUS_COVERED
+- BELLY_COVERED
+- FEET_COVERED
+- ARMPITS_COVERED
+
+## Gender/Age Detection
+
+### Requirements:
+- `best_gender.onnx` model in `Models/` directory
+- Model format should match the example in `myai/run.py`
+- Input: 224x224 RGB images
+- Output: Gender classification + Age regression
+
+### Features:
+- **Real-time Analysis**: Analyzes detected faces in real-time
+- **Gender Classification**: Male/Female with confidence scores
+- **Age Estimation**: Estimated age in years
+- **Visual Feedback**: Shows results on status overlay
+- **Runtime Toggle**: Press 'G' key to toggle on/off during runtime
+
+### Status Display:
+When enabled, shows:
+- `Gender Detection: ON/FAILED` in status overlay
+- For each detected face: `Female, 25y (0.95)` format
+- Gender, estimated age, and confidence score
+
+## Command Line Arguments
+
+- `-c, --camera`: Camera ID (default: 0)
+- `-r, --rules`: Path to blur exception rules file (optional - auto-loads if exists)
+- `-g, --gender-detection`: Enable gender and age detection
+- `--no-boxes`: Disable detection boxes
+- `--privacy`: Start in privacy mode
+- `--enhanced-blur`: Use enhanced blur mode
+- `--solid-color`: Use solid color masking
+- `--mask-color`: Color for solid masking (BGR format)
+- `--auto-record`: Auto-record when nudity detected
+- `--alert-threshold`: Consecutive detections for alert
+- `--skip-frames`: Process every nth frame for performance
+
+## Runtime Controls
+
+- **SPACE**: Toggle recording
+- **B**: Toggle detection boxes
+- **P**: Toggle privacy mode  
+- **G**: Toggle gender detection (if enabled)
+- **Q**: Quit application
+
+## Example Rule Configurations
+
+### Strict Mode (Only explicit content)
+```
+FEMALE_GENITALIA_EXPOSED = true
+MALE_GENITALIA_EXPOSED = true
+FEMALE_BREAST_EXPOSED = true
+BUTTOCKS_EXPOSED = true
+ANUS_EXPOSED = true
+MALE_BREAST_EXPOSED = false
+BELLY_EXPOSED = false
+FEET_EXPOSED = false
+ARMPITS_EXPOSED = false
+FACE_FEMALE = false
+FACE_MALE = false
+# All COVERED labels = false
+```
+
+### Conservative Mode (Maximum privacy)
+```
+# All EXPOSED labels = true
+# Covered areas also censored for privacy
+FEMALE_GENITALIA_COVERED = true
+FEMALE_BREAST_COVERED = true
+BUTTOCKS_COVERED = true
+FACE_FEMALE = false
+FACE_MALE = false
+```
+
+### Face Analysis Mode (Skip censoring, focus on gender/age)
+```
+# All labels = false (no censoring)
+# Use with -g flag for gender/age analysis only
+```
 
 ---
 
