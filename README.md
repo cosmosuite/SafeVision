@@ -296,8 +296,7 @@ SafeVision/
 #### ⚙️ Configuration Files
 - **`BlurException.rule`**: Rules defining what content to blur
 - **`*.json`**: Runtime settings and detection logs
-- **`safevision_gui_new.py`**: Modern PyQt5 interface with advanced features
-- **`safevision_gui.py`**: Original GUI with basic functionality
+- **`safevision_gui.py`**: Modern PyQt5 interface with advanced features
 - **`safevision_api_server.py`**: RESTful API server for integration
 
 #### ⚙️ Configuration Files
@@ -854,11 +853,11 @@ curl -X GET http://localhost:5000/api/v1/health
 curl -X POST -F "image=@test.jpg" http://localhost:5000/api/v1/detect
 ```
 
-### 🖥️ safevision_gui_new.py - GUI Application
+### 🖥️ safevision_gui.py - GUI Application
 
 **Purpose**: Advanced PyQt5 desktop application with comprehensive UI for all SafeVision features.
 
-**Basic Usage**: `python safevision_gui_new.py`
+**Basic Usage**: `python safevision_gui.py`
 
 **Features**:
 - No command-line arguments (fully GUI-driven)
@@ -872,7 +871,7 @@ curl -X POST -F "image=@test.jpg" http://localhost:5000/api/v1/detect
 **Examples**:
 ```bash
 # Launch GUI application
-python safevision_gui_new.py
+python safevision_gui.py
 
 # Note: All configuration is done through the GUI interface
 # No command-line arguments are supported
