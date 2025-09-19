@@ -31,6 +31,7 @@ __labels = [
 
 
 def _read_image(image_path, target_size=320):
+    # MODIFIED: Keep original resolution for output, only resize for AI detection
     img = cv2.imread(image_path)
     img_height, img_width = img.shape[:2]
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -209,6 +210,7 @@ class NudeDetector:
                 detection for detection in detections if detection["class"] in classes
             ]
 
+        # MODIFIED: Load original image at full resolution for output
         img = cv2.imread(image_path)
         img_boxes = img.copy()
         img_combined = img.copy()
@@ -243,15 +245,18 @@ class NudeDetector:
                 exposed_count += 1
 
             else:
+                # MODIFIED: Commented out rectangle drawing for clean blur output
                 # Draw boxes around NSFW regions
-                cv2.rectangle(img_boxes, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                # cv2.rectangle(img_boxes, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 # Add label near the box
-                cv2.putText(img_boxes, label_text, (x, y - 5), font, font_scale, (0, 255, 0), font_thickness, cv2.LINE_AA)
+                # cv2.putText(img_boxes, label_text, (x, y - 5), font, font_scale, (0, 255, 0), font_thickness, cv2.LINE_AA)
+                pass
 
+            # MODIFIED: Commented out rectangle drawing for clean blur output
             # Draw boxes on the combined image
-            cv2.rectangle(img_combined, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            # cv2.rectangle(img_combined, (x, y), (x + w, y + h), (0, 255, 0), 2)
             # Add label near the box
-            cv2.putText(img_combined, label_text, (x, y - 5), font, font_scale, (0, 255, 0), font_thickness, cv2.LINE_AA)
+            # cv2.putText(img_combined, label_text, (x, y - 5), font, font_scale, (0, 255, 0), font_thickness, cv2.LINE_AA)
 
         if not output_path:
             input_path, ext = os.path.splitext(args.input)

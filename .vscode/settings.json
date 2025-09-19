@@ -1,0 +1,6 @@
+{
+    "python.pythonPath": "./safevision_env/bin/python",
+    "python.defaultInterpreterPath": "./safevision_env/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.activateEnvInCurrentTerminal": true
+}
